@@ -16,7 +16,7 @@ jobs:
       GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       GH_USER: ${{secrets.GH_USER}}
       GH_EMAIL: ${{secrets.GH_EMAIL}}
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     services:
       postgres:
         image: postgres:10.10
@@ -44,7 +44,7 @@ jobs:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-2-${{ hashFiles('**/package.json') }}
 
-      - run: yarn install --frozen-lockfile
+      - run: yarn install
       - run: yarn bootstrap
       - run: yarn build
       - name: run integration tests
