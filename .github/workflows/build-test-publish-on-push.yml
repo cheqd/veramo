@@ -17,15 +17,9 @@ jobs:
       GH_USER: ${{secrets.GH_USER}}
       GH_EMAIL: ${{secrets.GH_EMAIL}}
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:10.10
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: test123
-        ports:
-          - 5432:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    # Removed postgres related tests
+
     steps:
       - uses: actions/checkout@v3
         with:
@@ -49,7 +43,7 @@ jobs:
       - run: yarn build
       - name: run integration tests
         env:
-          INCLUDE_POSTGRES_TESTS: true
+          INCLUDE_POSTGRES_TESTS: false
           POSTGRES_HOST: localhost
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: test123
