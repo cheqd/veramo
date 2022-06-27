@@ -12,10 +12,7 @@ jobs:
   build-test-publish:
     env:
       NPM_TOKEN: ${{secrets.NPM_GITHUB_PAT}}
-      NODE_AUTH_TOKEN: ${{secrets.NPM_GITHUB_PAT}}
       GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      GH_USER: ${{secrets.GH_USER}}
-      GH_EMAIL: ${{secrets.GH_EMAIL}}
     runs-on: ubuntu-latest
 
     # Removed postgres related tests
@@ -24,41 +21,41 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '14.x'
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: actions/cache@v3
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-2-${{ hashFiles('**/package.json') }}
+      # - name: Get yarn cache directory path
+      #   id: yarn-cache-dir-path
+      #   run: echo "::set-output name=dir::$(yarn cache dir)"
+      # - uses: actions/cache@v3
+      #   id: yarn-cache
+      #   with:
+      #     path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+      #     key: ${{ runner.os }}-yarn-2-${{ hashFiles('**/package.json') }}
 
       - run: yarn install
       - run: yarn bootstrap
       - run: yarn build
-      - name: run integration tests
-        env:
-          INCLUDE_POSTGRES_TESTS: false
-          POSTGRES_HOST: localhost
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: test123
-          POSTGRES_PORT: 5432
-        run: yarn test:integration        
-      - run: yarn docs
+      # - name: run integration tests
+      #   env:
+      #     INCLUDE_POSTGRES_TESTS: false
+      #     POSTGRES_HOST: localhost
+      #     POSTGRES_USER: postgres
+      #     POSTGRES_PASSWORD: test123
+      #     POSTGRES_PORT: 5432
+      #   run: yarn test:integration        
+      # - run: yarn docs
 
-      - name: run browser tests
-        run: yarn test:browser
+      # - name: run browser tests
+      #   run: yarn test:browser
 
       - name: setup git coordinates
         run: |
-          git remote set-url origin https://cheqd:$GH_TOKEN@github.com/cheqd/veramo.git
-          git config user.name $GH_USER
-          git config user.email $GH_EMAIL
+          git config user.name cheqd-automation-bot
+          git config user.email tasos@cheqd.io
 
       - name: setup github npm registry
         run: |
