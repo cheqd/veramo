@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@veramo/core": "^3.1.4",
-    "@veramo/did-jwt": "^3.1.4",
+    "@cheqd/veramo-did-jwt": "^3.1.4",
     "@veramo/did-resolver": "^3.1.4",
     "@veramo/message-handler": "^3.1.4",
     "@veramo/utils": "^3.1.4",
@@ -42,7 +42,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "repository": "git@github.com:uport-project/veramo.git",
+  "repository": "git@github.com:cheqd/veramo.git",
   "author": "Simonas Karuzas <simonas.karuzas@mesh.xyz>",
   "contributors": [
     {

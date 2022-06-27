@@ -1,5 +1,5 @@
 {
-  "name": "@veramo/did-jwt",
+  "name": "@cheqd/veramo-did-jwt",
   "description": "Veramo message validator plugin for decoding and verifying JWT payloads.",
   "version": "3.1.4",
   "main": "build/index.js",
@@ -28,7 +28,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "repository": "git@github.com:uport-project/veramo.git",
+  "repository": "git@github.com:cheqd/veramo.git",
   "author": "Simonas Karuzas <simonas.karuzas@mesh.xyz>",
   "contributors": [
     {
