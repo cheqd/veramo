@@ -16,7 +16,7 @@ jobs:
       GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       GH_USER: ${{secrets.GH_USER}}
       GH_EMAIL: ${{secrets.GH_EMAIL}}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     services:
       postgres:
         image: postgres:10.10
