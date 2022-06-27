@@ -1,6 +1,5 @@
 {
   "name": "@cheqd/veramo",
-  "private": true,
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "build": "yarn build:js && yarn build:api && yarn build:schema",
