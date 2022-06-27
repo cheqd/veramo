@@ -22,5 +22,5 @@
       "message": "chore(release): %s [skip ci]"
     }
   },
-  "useWorkspaces": true
+  "useWorkspaces": false
 }
