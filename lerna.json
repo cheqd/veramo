@@ -1,6 +1,7 @@
 {
   "version": "3.1.5",
   "packages": [
+    "packages/cli",
     "packages/credential-w3c",
     "packages/did-jwt"
   ],
