@@ -1,5 +1,5 @@
 {
-  "name": "@cheqd/veramo-did-jwt",
+  "name": "@cheqd/did-jwt",
   "description": "Veramo message validator plugin for decoding and verifying JWT payloads.",
   "version": "3.1.4",
   "main": "build/index.js",
