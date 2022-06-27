@@ -21,6 +21,7 @@
     "publish:latest": "lerna publish --conventional-commits --include-merged-tags --create-release github --yes --dist-tag latest --registry https://npm.pkg.github.com/:_authToken=${NPM_GITHUB_PAT}",
     "publish:next": "lerna publish --conventional-prerelease --force-publish --canary --no-git-tag-version --include-merged-tags --preid next --pre-dist-tag next --yes --registry https://registry.npmjs.org/:_authToken=${NPM_TOKEN}",
     "publish:unstable": "lerna publish --conventional-prerelease --force-publish --canary --no-git-tag-version --include-merged-tags --preid unstable --pre-dist-tag unstable --yes --registry https://registry.npmjs.org/:_authToken=${NPM_TOKEN}",
+    "publish:cheqd": "lerna publish --conventional-prerelease --force-publish --include-merged-tags --create-release github --yes --dist-tag cheqd --registry https://npm.pkg.github.com/:_authToken=${NPM_GITHUB_PAT}",
     "docs": "yarn docs:copy && yarn docs:build",
     "docs:copy": "ts-node ./scripts/docs-copy.ts",
     "docs:build": "ts-node ./scripts/docs-build.ts && yarn docs:pretty",
