@@ -5,13 +5,14 @@
   ],
   "npmClient": "yarn",
   "changelog": {
-    "repo": "uport-project/veramo",
+    "repo": "cheqd/veramo",
     "cacheDir": ".changelog"
   },
   "command": {
     "publish": {
       "allowBranch": [
         "main",
+        "cheqd",
         "next",
         "master"
       ],
