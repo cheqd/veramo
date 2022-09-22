@@ -14,6 +14,7 @@
     "EcdsaSecp256k1VerificationKey2019": "sec:EcdsaSecp256k1VerificationKey2019",
     "Ed25519Signature2018": "sec:Ed25519Signature2018",
     "Ed25519VerificationKey2018": "sec:Ed25519VerificationKey2018",
+    "Ed25519Signature2020": "sec:Ed25519Signature2020",
     "Ed25519VerificationKey2020": "sec:Ed25519VerificationKey2020",    
     "RsaSignature2018": "sec:RsaSignature2018",
     "RsaVerificationKey2018": "sec:RsaVerificationKey2018",

@@ -285,7 +285,7 @@ export function extractPublicKeyHex(pk: _ExtendedVerificationMethod, convert: bo
   } else if (pk.publicKeyBase58) {
     keyBytes = u8a.fromString(pk.publicKeyBase58, 'base58btc')
   } else if (pk.publicKeyMultibase) {
-    keyBytes = u8a.fromString(pk.publicKeyMultibase, 'base58btc')
+    keyBytes = u8a.fromString(pk.publicKeyMultibase.substring(1), 'base58btc')
   } else if (pk.publicKeyBase64) {
     keyBytes = u8a.fromString(pk.publicKeyBase64, 'base64pad')
   } else return ''
@@ -296,5 +296,5 @@ export function extractPublicKeyHex(pk: _ExtendedVerificationMethod, convert: bo
       return ''
     }
   }
-  return u8a.toString(keyBytes, 'hex')
+  return u8a.toString(keyBytes, 'base16')
 }

@@ -2,9 +2,9 @@ import { encodeJoseBlob } from '@veramo/utils'
 import { RequiredAgentMethods, VeramoLdSignature } from '../ld-suites'
 import { CredentialPayload, DIDDocument, IAgentContext, IKey, TKeyType } from '@veramo/core'
 import * as u8a from 'uint8arrays'
-// @ts-ignore
-import { Ed25519VerificationKey2020, Ed25519Signature2020 } from '@digitalcredentials/ed25519-signature-2020'
-
+import { Ed25519Signature2020 } from '@digitalcredentials/ed25519-signature-2020'
+import { Ed25519VerificationKey2020 } from '@digitalcredentials/ed25519-verification-key-2020'
+import { TextEncoder } from 'util'
 /**
  * Veramo wrapper for the Ed25519Signature2020 suite by Transmute Industries
  *
@@ -19,7 +19,7 @@ export class VeramoEd25519Signature2020 extends VeramoLdSignature {
     return 'Ed25519'
   }
 
-  async getSuiteForSigning(
+  getSuiteForSigning(
     key: IKey,
     issuerDid: string,
     verificationMethodId: string,
@@ -31,36 +31,28 @@ export class VeramoEd25519Signature2020 extends VeramoLdSignature {
     let id = verificationMethodId
 
     const signer = {
-      // returns a JWS detached
-      sign: async (args: { data: Uint8Array }): Promise<string> => {
-        const header = {
-          alg: 'EdDSA',
-          b64: false,
-          crit: ['b64'],
-        }
-        const headerString = encodeJoseBlob(header)
-        const messageBuffer = u8a.concat([u8a.fromString(`${headerString}.`, 'utf-8'), args.data])
-        const messageString = u8a.toString(messageBuffer, 'base64')
+      // returns signatureBytes
+      sign: async (args: { data: Uint8Array }): Promise<Uint8Array> => {
+        const messageString = u8a.toString(args.data, 'base64')
         const signature = await context.agent.keyManagerSign({
           keyRef: key.kid,
-          algorithm: 'EdDSA',
           data: messageString,
           encoding: 'base64',
         })
-        return `${headerString}..${signature}`
+        const utf8Encode = new TextEncoder()
+        return utf8Encode.encode(signature)
       },
     }
-
-    const verificationKey = await Ed25519VerificationKey2020.from({
+    console.log(_encodeMbKey(MULTICODEC_ED25519_PUB_HEADER, u8a.fromString(key.publicKeyHex, 'hex')))
+    const verificationKey = new Ed25519VerificationKey2020({
       id,
       controller,
-      publicKeyMultibase: u8a.fromString(key.publicKeyHex, 'base16'),
+      publicKeyMultibase: _encodeMbKey(MULTICODEC_ED25519_PUB_HEADER, u8a.fromString(key.publicKeyHex, 'hex')),
       signer: ()=> signer,
       type: this.getSupportedVerificationType(),
     })
-    // overwrite the signer since we're not passing the private key and transmute doesn't support that behavior
+    // overwrite the signer since we're not passing the private key
     verificationKey.signer = () => signer as any
-    console.log(verificationKey)
     return new Ed25519Signature2020({
       key: verificationKey,
       signer: signer
@@ -78,4 +70,16 @@ export class VeramoEd25519Signature2020 extends VeramoLdSignature {
   preDidResolutionModification(didUrl: string, didDoc: DIDDocument): void {
     // nothing to do here
   }
+}
+
+const MULTIBASE_BASE58BTC_HEADER = 'z'
+const MULTICODEC_ED25519_PUB_HEADER = new Uint8Array([0xed, 0x01]);
+
+function _encodeMbKey(header:any, key:any) {
+  const mbKey = new Uint8Array(header.length + key.length);
+
+  mbKey.set(header);
+  mbKey.set(key, header.length);
+
+  return MULTIBASE_BASE58BTC_HEADER + u8a.toString(mbKey, 'base58btc') 
 }
