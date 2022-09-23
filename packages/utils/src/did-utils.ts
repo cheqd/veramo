@@ -158,6 +158,9 @@ export async function mapIdentifierKeysToDoc(
   context: IAgentContext<IResolver>,
 ): Promise<_ExtendedIKey[]> {
   const didDocument = await resolveDidOrThrow(identifier.did, context)
+  if(!didDocument.assertionMethod?.length) {
+    didDocument.assertionMethod = didDocument.verificationMethod ? [didDocument.verificationMethod[0].id] : []
+  }
   // dereference all key agreement keys from DID document and normalize
   const documentKeys: _NormalizedVerificationMethod[] = await dereferenceDidKeys(
     didDocument,
@@ -283,6 +286,8 @@ export function extractPublicKeyHex(pk: _ExtendedVerificationMethod, convert: bo
     keyBytes = u8a.fromString(pk.publicKeyHex, 'base16')
   } else if (pk.publicKeyBase58) {
     keyBytes = u8a.fromString(pk.publicKeyBase58, 'base58btc')
+  } else if (pk.publicKeyMultibase) {
+    keyBytes = u8a.fromString(pk.publicKeyMultibase.substring(1), 'base58btc')
   } else if (pk.publicKeyBase64) {
     keyBytes = u8a.fromString(pk.publicKeyBase64, 'base64pad')
   } else return ''
