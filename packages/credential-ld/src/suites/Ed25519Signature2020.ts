@@ -10,6 +10,9 @@ import { TextEncoder } from 'util'
  * @alpha This API is experimental and is very likely to change or disappear in future releases without notice.
  */
 export class VeramoEd25519Signature2020 extends VeramoLdSignature {
+  private readonly MULTIBASE_BASE58BTC_PREFIX = 'z'
+  private readonly MULTICODEC_PREFIX = [0xed, 0x01]
+
   getSupportedVerificationType(): string {
     return 'Ed25519VerificationKey2020'
   }
@@ -46,7 +49,7 @@ export class VeramoEd25519Signature2020 extends VeramoLdSignature {
     const verificationKey = new Ed25519VerificationKey2020({
       id,
       controller,
-      publicKeyMultibase: _encodeMbKey(MULTICODEC_ED25519_PUB_HEADER, u8a.fromString(key.publicKeyHex, 'hex')),
+      publicKeyMultibase: this.preSigningKeyModification(u8a.fromString(key.publicKeyHex, 'hex')),
       signer: ()=> signer,
       type: this.getSupportedVerificationType(),
     })
@@ -67,18 +70,12 @@ export class VeramoEd25519Signature2020 extends VeramoLdSignature {
   }
 
   preDidResolutionModification(didUrl: string, didDoc: DIDDocument): void {
-    // nothing to do here
+    didDoc.assertionMethod = didDoc?.verificationMethod || []
+    return
   }
-}
 
-const MULTIBASE_BASE58BTC_HEADER = 'z'
-const MULTICODEC_ED25519_PUB_HEADER = new Uint8Array([0xed, 0x01]);
-
-function _encodeMbKey(header:any, key:any) {
-  const mbKey = new Uint8Array(header.length + key.length);
-
-  mbKey.set(header);
-  mbKey.set(key, header.length);
-
-  return MULTIBASE_BASE58BTC_HEADER + u8a.toString(mbKey, 'base58btc') 
+  preSigningKeyModification(key: Uint8Array): string {
+    const modifiedKey = Uint8Array.from([...this.MULTICODEC_PREFIX, ...key])
+    return `${this.MULTIBASE_BASE58BTC_PREFIX}${u8a.toString(modifiedKey, 'base58btc')}`
+  }
 }

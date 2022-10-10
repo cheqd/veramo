@@ -11,6 +11,7 @@ import {
 import { isDefined } from './type-utils'
 import * as u8a from 'uint8arrays'
 import elliptic from 'elliptic'
+import { bases } from 'multiformats/basics'
 import Debug from 'debug'
 import { hexToBytes, bytesToHex, base64ToBytes, base58ToBytes } from './encodings'
 
@@ -199,9 +200,6 @@ export async function mapIdentifierKeysToDoc(
   context: IAgentContext<IResolver>,
 ): Promise<_ExtendedIKey[]> {
   const didDocument = await resolveDidOrThrow(identifier.did, context)
-  if(!didDocument.assertionMethod?.length) {
-    didDocument.assertionMethod = didDocument.verificationMethod ? [didDocument.verificationMethod[0].id] : []
-  }
   // dereference all key agreement keys from DID document and normalize
   const documentKeys: _NormalizedVerificationMethod[] = await dereferenceDidKeys(
     didDocument,
@@ -303,7 +301,7 @@ export async function dereferenceDidKeys(
     .filter(isDefined)
     .map((key) => {
       const hexKey = extractPublicKeyHex(key, convert)
-      const { publicKeyHex, publicKeyBase58, publicKeyBase64, publicKeyJwk, ...keyProps } = key
+      const { publicKeyHex, publicKeyBase58, publicKeyMultibase, publicKeyBase64, publicKeyJwk, ...keyProps } = key
       const newKey = { ...keyProps, publicKeyHex: hexKey }
       if (convert && 'Ed25519VerificationKey2018' === newKey.type) {
         newKey.type = 'X25519KeyAgreementKey2019'
@@ -328,7 +326,7 @@ export function extractPublicKeyHex(pk: _ExtendedVerificationMethod, convert: bo
   } else if (pk.publicKeyBase58) {
     keyBytes = u8a.fromString(pk.publicKeyBase58, 'base58btc')
   } else if (pk.publicKeyMultibase) {
-    keyBytes = u8a.fromString(pk.publicKeyMultibase.substring(1), 'base58btc')
+    keyBytes = bases['base58btc'].decode(pk.publicKeyMultibase)
   } else if (pk.publicKeyBase64) {
     keyBytes = u8a.fromString(pk.publicKeyBase64, 'base64pad')
   } else return ''
