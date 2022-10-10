@@ -136,6 +136,8 @@ interface LegacyVerificationMethod extends VerificationMethod {
 function extractPublicKeyBytes(pk: VerificationMethod): Uint8Array {
   if (pk.publicKeyBase58) {
     return base58ToBytes(pk.publicKeyBase58)
+  } else if (pk.publicKeyMultibase) {
+    return bases['base58btc'].decode(pk.publicKeyMultibase)
   } else if ((<LegacyVerificationMethod>pk).publicKeyBase64) {
     return base64ToBytes((<LegacyVerificationMethod>pk).publicKeyBase64)
   } else if (pk.publicKeyHex) {
@@ -155,6 +157,12 @@ function extractPublicKeyBytes(pk: VerificationMethod): Uint8Array {
         })
         .getPublic('hex'),
     )
+  } else if (
+    pk.publicKeyJwk &&
+    pk.publicKeyJwk.crv === 'Ed25519' &&
+    pk.publicKeyJwk.x
+  ) {
+    return base64ToBytes(pk.publicKeyJwk.x)
   }
   return new Uint8Array()
 }
@@ -329,6 +337,12 @@ export function extractPublicKeyHex(pk: _ExtendedVerificationMethod, convert: bo
     keyBytes = bases['base58btc'].decode(pk.publicKeyMultibase)
   } else if (pk.publicKeyBase64) {
     keyBytes = u8a.fromString(pk.publicKeyBase64, 'base64pad')
+  } else if (
+    pk.publicKeyJwk &&
+    pk.publicKeyJwk.crv === 'Ed25519' &&
+    pk.publicKeyJwk.x
+  ) {
+    keyBytes = base64ToBytes(pk.publicKeyJwk.x)
   } else return ''
   if (convert) {
     if (['Ed25519', 'Ed25519VerificationKey2018'].includes(pk.type)) {
