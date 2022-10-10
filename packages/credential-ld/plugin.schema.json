@@ -12,11 +12,18 @@
             "keyRef": {
               "type": "string",
               "description": "Optional. The key handle ( {@link  @veramo/core#IKey.kid | IKey.kid } ) from the internal database."
+            },
+            "fetchRemoteContexts": {
+              "type": "boolean",
+              "description": "Set this to true if you want the `@context` URLs to be fetched in case they are not preloaded.\n\nDefaults to `false`"
             }
           },
           "required": [
             "credential"
           ],
+          "additionalProperties": {
+            "description": "Any other options that can be forwarded to the lower level libraries"
+          },
           "description": "Encapsulates the parameters required to create a\n {@link  https://www.w3.org/TR/vc-data-model/#credentials | W3C Verifiable Credential }"
         },
         "CredentialPayload": {
@@ -47,7 +54,7 @@
               "$ref": "#/components/schemas/DateType"
             },
             "credentialStatus": {
-              "$ref": "#/components/schemas/CredentialStatus"
+              "$ref": "#/components/schemas/CredentialStatusReference"
             },
             "id": {
               "type": "string"
@@ -75,7 +82,7 @@
               "type": "string"
             }
           ],
-          "description": "The issuer of a Credential or the holder of a Presentation.\n\nThe value of the issuer property MUST be either a URI or an object containing an id property. It is RECOMMENDED that the URI in the issuer or its id be one which, if de-referenced, results in a document containing machine-readable information about the issuer that can be used to verify the information expressed in the credential.\n\nSee  {@link  https://www.w3.org/TR/vc-data-model/#issuer | Issuer data model }"
+          "description": "The issuer of a  {@link  VerifiableCredential }  or the holder of a  {@link  VerifiablePresentation } .\n\nThe value of the issuer property MUST be either a URI or an object containing an id property. It is RECOMMENDED that the URI in the issuer or its id be one which, if de-referenced, results in a document containing machine-readable information about the issuer that can be used to verify the information expressed in the credential.\n\nSee  {@link  https://www.w3.org/TR/vc-data-model/#issuer | Issuer data model }"
         },
         "CredentialSubject": {
           "type": "object",
@@ -90,7 +97,7 @@
           "type": "string",
           "description": "Represents an issuance or expiration date for Credentials / Presentations. This is used as input when creating them."
         },
-        "CredentialStatus": {
+        "CredentialStatusReference": {
           "type": "object",
           "properties": {
             "id": {
@@ -151,7 +158,7 @@
               "type": "string"
             },
             "credentialStatus": {
-              "$ref": "#/components/schemas/CredentialStatus"
+              "$ref": "#/components/schemas/CredentialStatusReference"
             },
             "id": {
               "type": "string"
@@ -173,7 +180,7 @@
               "type": "string"
             }
           },
-          "description": "A proof property of a Verifiable Credential or Presentation"
+          "description": "A proof property of a  {@link  VerifiableCredential }  or  {@link  VerifiablePresentation }"
         },
         "ICreateVerifiablePresentationLDArgs": {
           "type": "object",
@@ -193,11 +200,18 @@
             "keyRef": {
               "type": "string",
               "description": "Optional. The key handle ( {@link  @veramo/core#IKey.kid | IKey.kid } ) from the internal database."
+            },
+            "fetchRemoteContexts": {
+              "type": "boolean",
+              "description": "Set this to true if you want the `@context` URLs to be fetched in case they are not preloaded.\n\nDefaults to `false`"
             }
           },
           "required": [
             "presentation"
           ],
+          "additionalProperties": {
+            "description": "Any other options that can be forwarded to the lower level libraries"
+          },
           "description": "Encapsulates the parameters required to create a\n {@link  https://www.w3.org/TR/vc-data-model/#presentations | W3C Verifiable Presentation }"
         },
         "PresentationPayload": {
@@ -333,12 +347,15 @@
             },
             "fetchRemoteContexts": {
               "type": "boolean",
-              "description": "Set this to true if you want the `@context` URLs to be fetched in case they are not pre-loaded.\n\nDefaults to `false`"
+              "description": "Set this to true if you want the `@context` URLs to be fetched in case they are not preloaded.\n\nDefaults to `false`"
             }
           },
           "required": [
             "credential"
           ],
+          "additionalProperties": {
+            "description": "Any other options that can be forwarded to the lower level libraries"
+          },
           "description": "Encapsulates the parameters required to verify a\n {@link  https://www.w3.org/TR/vc-data-model/#credentials | W3C Verifiable Credential }"
         },
         "IVerifyPresentationLDArgs": {
@@ -358,12 +375,15 @@
             },
             "fetchRemoteContexts": {
               "type": "boolean",
-              "description": "Set this to true if you want the `@context` URLs to be fetched in case they are not pre-loaded.\n\nDefaults to `false`"
+              "description": "Set this to true if you want the `@context` URLs to be fetched in case they are not preloaded.\n\nDefaults to `false`"
             }
           },
           "required": [
             "presentation"
           ],
+          "additionalProperties": {
+            "description": "Any other options that can be forwarded to the lower level libraries"
+          },
           "description": "Encapsulates the parameters required to verify a\n {@link  https://www.w3.org/TR/vc-data-model/#presentations | W3C Verifiable Presentation }"
         }
       },

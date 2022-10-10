@@ -190,9 +190,62 @@ presentation
       challenge: options.challenge,
       domain: options.domain,
     })
-    if (result === true) {
+    if (result.verified === true) {
       console.log('Presentation was verified successfully.')
     } else {
       console.error('Presentation could not be verified.')
+    }
+  })
+
+presentation
+  .command('output')
+  .description('Print W3C Verifiable Presentation to stdout')
+  .option('-t, --tag <string>', 'Optional. Specify the tag for the presentation.')
+  .action(async (options) => {
+    const agent = getAgent(program.opts().config)
+
+    const presentations = await agent.dataStoreORMGetVerifiablePresentations({})
+
+    if (presentations.length > 0) {
+
+      let selected = null
+      const list: any = []
+      if (options.tag) {
+        const matches = presentations.filter(pres => pres.verifiablePresentation.tag === options.tag)
+        if (matches.length > 1) {
+          console.log('Found multiple matching presentations. Only showing the first one.')
+        }
+        selected = matches[0]
+      } else {
+        for (const pres of presentations) {
+          list.push({
+            name:
+              'Issuance Date: ' +
+              pres.verifiablePresentation.issuanceDate +
+              ' | Holder: ' +
+              pres.verifiablePresentation.holder +
+              ' | Tag: ' +
+              pres.verifiablePresentation.tag,
+            value: pres,
+          })
+        }
+        const answers = await inquirer.prompt([
+          {
+            type: 'list',
+            name: 'presentation',
+            choices: list,
+            message: 'Select presentation',
+          },
+        ])
+        selected = answers.presentation
+      }
+
+      if (selected) {
+        console.dir(selected, { depth: 10 })
+      } else {
+        console.log('Presentation not found.')
+      }
+    } else {
+      console.log('No presentations found.')
     }
   })

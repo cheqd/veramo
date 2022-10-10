@@ -1,8 +1,21 @@
-import { IDataStore, IDataStoreORM, IDIDManager, IIdentifier, TAgent } from '../../packages/core/src'
-import { ICredentialIssuer } from '../../packages/credential-w3c/src'
+// noinspection ES6PreferShortImport
+
+import {
+  ICredentialPlugin,
+  IDataStore,
+  IDataStoreORM,
+  IDIDManager,
+  IIdentifier,
+  IMessageHandler,
+  TAgent,
+  VerifiableCredential,
+  VerifiablePresentation,
+} from '../../packages/core/src'
 import { IDIDComm } from '../../packages/did-comm/src'
 
-type ConfiguredAgent = TAgent<IDIDManager & ICredentialIssuer & IDataStore & IDataStoreORM & IDIDComm>
+type ConfiguredAgent = TAgent<
+  IDIDManager & ICredentialPlugin & IDataStore & IDataStoreORM & IDIDComm & IMessageHandler
+>
 
 export default (testContext: {
   getAgent: () => ConfiguredAgent
@@ -70,7 +83,7 @@ export default (testContext: {
         credential: verifiableCredential,
       })
 
-      expect(result).toEqual(true)
+      expect(result.verified).toEqual(true)
     })
 
     it('should handleMessage with VC (non-JWT)', async () => {
@@ -96,20 +109,19 @@ export default (testContext: {
         hash: storedCredentialHash,
       })
 
+      // tamper with credential
       verifiableCredential.credentialSubject.name = 'Martin, the not so greats'
 
-      try {
-        await agent.handleMessage({
+      await expect(
+        agent.handleMessage({
           raw: JSON.stringify({
             body: verifiableCredential,
             type: 'w3c.vc',
           }),
           save: false,
           metaData: [{ type: 'LDS' }],
-        })
-      } catch (e) {
-        expect(e).toEqual(Error('Error verifying LD Verifiable Credential'))
-      }
+        }),
+      ).rejects.toThrow(/Verification error/)
     })
 
     it('should sign a verifiable presentation in LD', async () => {
@@ -162,7 +174,7 @@ export default (testContext: {
         domain,
       })
 
-      expect(result).toBeTruthy()
+      expect(result.verified).toEqual(true)
     })
 
     it('should handleMessage with VPs (non-JWT)', async () => {
@@ -242,7 +254,65 @@ export default (testContext: {
         credential: verifiableCredential,
       })
 
-      expect(result).toEqual(true)
+      expect(result.verified).toEqual(true)
+    })
+
+    describe('credential verification policies', () => {
+      it('can verify credential at a particular time', async () => {
+        const issuanceDate = '2019-08-19T09:15:20.000Z' // 1566206120
+        const expirationDate = '2019-08-20T10:42:31.000Z' // 1566297751
+        let credential = await agent.createVerifiableCredential({
+          proofFormat: 'lds',
+          credential: {
+            issuer: { id: didKeyIdentifier.did },
+            '@context': ['https://veramo.io/contexts/profile/v1'],
+            type: ['Profile'],
+            issuanceDate,
+            expirationDate,
+            credentialSubject: {
+              id: didKeyIdentifier.did,
+              name: 'hello',
+            },
+          },
+          now: 1566206120,
+        })
+
+        const result = await agent.verifyCredential({ credential })
+        expect(result.verified).toBe(false)
+
+        const result2 = await agent.verifyCredential({
+          credential,
+          policies: { now: 1566297000 },
+        })
+        expect(result2.verified).toBe(true)
+      })
+
+      it('can override credentialStatus check', async () => {
+        const cred = await agent.createVerifiableCredential({
+          proofFormat: 'lds',
+          credential: {
+            issuer: { id: didKeyIdentifier.did },
+            '@context': ['https://veramo.io/contexts/profile/v1'],
+            type: ['Profile'],
+            credentialSubject: {
+              id: didKeyIdentifier.did,
+              name: 'hello',
+            },
+            credentialStatus: {
+              id: 'override me',
+              type: 'ThisMethodDoesNotExist2022',
+            },
+          },
+          now: 1566206120,
+        })
+        await expect(agent.verifyCredential({ credential: cred })).rejects.toThrow(/^invalid_setup:/)
+
+        const result2 = await agent.verifyCredential({
+          credential: cred,
+          policies: { credentialStatus: false },
+        })
+        expect(result2.verified).toBe(true)
+      })
     })
   })
 }
