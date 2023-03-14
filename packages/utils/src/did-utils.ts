@@ -138,7 +138,7 @@ function extractPublicKeyBytes(pk: VerificationMethod): Uint8Array {
   if (pk.publicKeyBase58) {
     return base58ToBytes(pk.publicKeyBase58)
   } else if (pk.publicKeyMultibase) {
-    return bases['base58btc'].decode(pk.publicKeyMultibase)
+    return bases['base58btc'].decode(pk.publicKeyMultibase).subarray(2)
   } else if ((<LegacyVerificationMethod>pk).publicKeyBase64) {
     return base64ToBytes((<LegacyVerificationMethod>pk).publicKeyBase64)
   } else if (pk.publicKeyHex) {
@@ -348,7 +348,7 @@ export function extractPublicKeyHex(pk: _ExtendedVerificationMethod, convert: bo
       ['Ed25519', 'Ed25519VerificationKey2018', 'Ed25519VerificationKey2020'].includes(pk.type) ||
       (pk.type === 'JsonWebKey2020' && pk.publicKeyJwk?.crv === 'Ed25519')
     ) {
-      keyBytes = extractPublicKeyX25519(keyBytes, pk.type)
+      keyBytes = convertPublicKeyToX25519(keyBytes)
     } else if (
       !['X25519', 'X25519KeyAgreementKey2019', 'X25519KeyAgreementKey2020'].includes(pk.type) &&
       !(pk.type === 'JsonWebKey2020' && pk.publicKeyJwk?.crv === 'X25519')
@@ -357,12 +357,4 @@ export function extractPublicKeyHex(pk: _ExtendedVerificationMethod, convert: bo
     }
   }
   return u8a.toString(keyBytes, 'base16')
-}
-
-function extractPublicKeyX25519(keyBytes: Uint8Array, type: string) {
-    if (keyBytes.length === 34 && type === 'Ed25519VerificationKey2020') {
-        keyBytes = keyBytes.slice(2)
-    }
-
-    return convertPublicKeyToX25519(keyBytes)
 }

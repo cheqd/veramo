@@ -48,7 +48,7 @@ export class VeramoEd25519Signature2020 extends VeramoLdSignature {
     const verificationKey = new Ed25519VerificationKey2020({
       id,
       controller,
-      publicKeyMultibase: u8a.toString(u8a.fromString(key.publicKeyHex, 'hex'), 'base58btc'),
+      publicKeyMultibase: this.preSigningKeyModification(u8a.fromString(key.publicKeyHex, 'hex')),
       // signer: () => signer,
       // type: this.getSupportedVerificationType(),
     })
@@ -71,5 +71,10 @@ export class VeramoEd25519Signature2020 extends VeramoLdSignature {
 
   preDidResolutionModification(didUrl: string, didDoc: DIDDocument): void {
     // nothing to do here
+  }
+
+  preSigningKeyModification(key: Uint8Array): string {
+    const modifiedKey = u8a.concat([this.MULTICODEC_PREFIX, key])
+    return `${this.MULTIBASE_BASE58BTC_PREFIX}${u8a.toString(modifiedKey, 'base58btc')}`
   }
 }
