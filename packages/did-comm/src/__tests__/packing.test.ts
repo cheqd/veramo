@@ -41,13 +41,13 @@ const multiBaseDoc = {
     {
       "controller": "did:web:portcullis.1keep.com",
       "id": "did:web:portcullis.1keep.com#0",
-      "publicKeyMultibase": "z6MkmhgpMDfiVVfLShamhYVCsWX6jQLVmwxXLtUykKFw3LwJ",
+      "publicKeyMultibase": "z8FRmkyRH9xAsLCk51yXN2Qy6uq4eN4iAesa3v3Hv889v",
       "type": "Ed25519VerificationKey2020"
     },
     {
       "controller": "did:web:portcullis.1keep.com",
       "id": "did:web:portcullis.1keep.com#1",
-      "publicKeyMultibase": "z6Mkm3dn838Ua5CJ5cKLg8S1DfaCgkXgQCWcDtbraTbAdW4B",
+      "publicKeyMultibase": "z6LSpSrLxbAhg2SHwKk7kwpsH7DM7QjFS5iK6qP87eViohud",
       "type": "X25519KeyAgreementKey2020"
     }
   ]
@@ -94,7 +94,7 @@ const base58Doc = {
 }
 
 const hexDoc = {
-  "@context": "https://w3id.org/did/v1",
+  "@context": "https://www.w3.org/ns/did/v1",
   "id": "did:web:iiw-demo.herokuapp.com",
   "verificationMethod": [
     {

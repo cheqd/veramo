@@ -1,7 +1,7 @@
 {
   "name": "@veramo/cli",
   "description": "Veramo command line application.",
-  "version": "5.1.2",
+  "version": "5.1.4",
   "exports": {
     ".": {
       "types": "./build/cli.d.ts",
@@ -42,7 +42,7 @@
     "@veramo/core-types": "^5.1.2",
     "@veramo/credential-eip712": "^5.1.2",
     "@veramo/credential-ld": "^5.1.2",
-    "@veramo/credential-w3c": "^5.1.2",
+    "@veramo/credential-w3c": "^5.1.4",
     "@veramo/data-store": "^5.1.2",
     "@veramo/did-comm": "^5.1.2",
     "@veramo/did-discovery": "^5.1.2",
@@ -50,6 +50,7 @@
     "@veramo/did-manager": "^5.1.2",
     "@veramo/did-provider-ethr": "^5.1.2",
     "@veramo/did-provider-key": "^5.1.2",
+    "@veramo/did-provider-peer": "^5.1.2",
     "@veramo/did-provider-pkh": "^5.1.2",
     "@veramo/did-provider-web": "^5.1.2",
     "@veramo/did-resolver": "^5.1.2",
